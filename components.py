@@ -40,7 +40,7 @@ def create_navbar():
                     ),
                     html.Div([
                         html.Div(
-                            "Dashboard Prevención Violencia NNA", 
+                            "Prevención Violencia NNA", 
                             style={
                                 'fontSize': '19px', 
                                 'fontWeight': '700', 
