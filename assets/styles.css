@@ -1,0 +1,1383 @@
+/* ============================================================
+   RESET Y FUNDAMENTOS - Sistema Apple
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root {
+    /* Colores Apple */
+    --apple-blue: #007AFF;
+    --apple-blue-dark: #0051D5;
+    --apple-gray-1: #F5F5F7;
+    --apple-gray-2: #E8E8ED;
+    --apple-gray-3: #D2D2D7;
+    --apple-gray-4: #86868B;
+    --apple-gray-5: #1D1D1F;
+    --apple-white: #FFFFFF;
+    
+    /* Sombras Apple */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+    --shadow-md: 0 2px 8px 0 rgba(0, 0, 0, 0.04), 0 1px 3px 0 rgba(0, 0, 0, 0.02);
+    --shadow-lg: 0 4px 16px 0 rgba(0, 0, 0, 0.06), 0 2px 8px 0 rgba(0, 0, 0, 0.03);
+    --shadow-xl: 0 8px 32px 0 rgba(0, 0, 0, 0.08), 0 4px 16px 0 rgba(0, 0, 0, 0.04);
+    --shadow-2xl: 0 16px 64px 0 rgba(0, 0, 0, 0.10), 0 8px 32px 0 rgba(0, 0, 0, 0.05);
+    
+    /* Espaciados Apple */
+    --spacing-xs: 4px;
+    --spacing-sm: 8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 32px;
+    --spacing-2xl: 48px;
+    
+    /* Bordes Apple */
+    --radius-xs: 6px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-2xl: 28px;
+    --radius-full: 9999px;
+    
+    /* Transiciones Apple */
+    --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    --ease-smooth: cubic-bezier(0.4, 0.0, 0.2, 1);
+    --ease-swift: cubic-bezier(0.4, 0.0, 0.6, 1);
+    
+    /* Performance */
+    --gpu-acceleration: translateZ(0);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'SF Pro Display', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    background: linear-gradient(180deg, #F5F5F7 0%, #FAFAFA 100%);
+    color: var(--apple-gray-5);
+    line-height: 1.5;
+    letter-spacing: -0.022em;
+    overflow-x: hidden;
+    font-weight: 400;
+}
+
+/* ============================================================
+   ANIMACIONES GLOBALES - Smooth & Performant
+   ============================================================ */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px) var(--gpu-acceleration);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) var(--gpu-acceleration);
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.96) var(--gpu-acceleration);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) var(--gpu-acceleration);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(-20px) var(--gpu-acceleration);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) var(--gpu-acceleration);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(20px) var(--gpu-acceleration);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) var(--gpu-acceleration);
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px) var(--gpu-acceleration);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) var(--gpu-acceleration);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1) var(--gpu-acceleration);
+    }
+    50% {
+        opacity: 0.85;
+        transform: scale(0.98) var(--gpu-acceleration);
+    }
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg) var(--gpu-acceleration);
+    }
+    to {
+        transform: rotate(360deg) var(--gpu-acceleration);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeOut {
+    to {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
+/* Clases de animación */
+.fade-in {
+    animation: fadeIn 0.4s var(--ease-smooth) forwards;
+}
+
+.fade-in-scale {
+    animation: fadeInScale 0.35s var(--ease-spring) forwards;
+}
+
+.slide-in-right {
+    animation: slideInRight 0.4s var(--ease-smooth) forwards;
+}
+
+.slide-in-left {
+    animation: slideInLeft 0.4s var(--ease-smooth) forwards;
+}
+
+.slide-in-up {
+    animation: slideInUp 0.4s var(--ease-smooth) forwards;
+}
+
+/* ============================================================
+   CARDS - Glassmorphism Premium
+   ============================================================ */
+.card {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 0.5px solid rgba(0, 0, 0, 0.04) !important;
+    border-radius: var(--radius-lg) !important;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s var(--ease-smooth);
+    overflow: hidden;
+    position: relative;
+    will-change: transform, box-shadow;
+    transform: var(--gpu-acceleration);
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(0, 122, 255, 0.2) 50%, 
+        transparent 100%);
+    opacity: 0;
+    transition: opacity 0.3s var(--ease-smooth);
+}
+
+.card:hover {
+    transform: translateY(-2px) scale(1.002) var(--gpu-acceleration);
+    box-shadow: var(--shadow-xl);
+    border-color: rgba(0, 122, 255, 0.08) !important;
+}
+
+.card:hover::before {
+    opacity: 1;
+}
+
+.card:active {
+    transform: translateY(0) scale(0.998) var(--gpu-acceleration);
+    transition-duration: 0.1s;
+}
+
+.card-body {
+    padding: var(--spacing-lg);
+}
+
+/* Card con efecto de brillo */
+.card-shine {
+    position: relative;
+    overflow: hidden;
+}
+
+.card-shine::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 70%
+    );
+    transform: translateX(-100%) translateY(-100%);
+    transition: transform 0.6s var(--ease-smooth);
+}
+
+.card-shine:hover::after {
+    transform: translateX(100%) translateY(100%);
+}
+
+/* ============================================================
+   BOTONES - Sistema iOS Perfecto
+   ============================================================ */
+.btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    padding: 11px 22px;
+    font-size: 15px;
+    font-weight: 590;
+    letter-spacing: -0.022em;
+    line-height: 1.2;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.25s var(--ease-smooth);
+    outline: none;
+    overflow: hidden;
+    white-space: nowrap;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    will-change: transform, box-shadow;
+    transform: var(--gpu-acceleration);
+}
+
+/* Efecto ripple en botones */
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    transform: translate(-50%, -50%);
+    transition: width 0.5s var(--ease-smooth), height 0.5s var(--ease-smooth);
+    pointer-events: none;
+}
+
+.btn:active::before {
+    width: 300px;
+    height: 300px;
+    transition-duration: 0s;
+}
+
+/* Estados de botón */
+.btn:hover {
+    transform: translateY(-1px) var(--gpu-acceleration);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn:active {
+    transform: translateY(0) scale(0.98) var(--gpu-acceleration);
+    box-shadow: var(--shadow-sm);
+    transition-duration: 0.1s;
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--apple-blue);
+    outline-offset: 2px;
+}
+
+/* Variantes de botón */
+.btn-primary {
+    background: var(--apple-blue);
+    color: white;
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25);
+}
+
+.btn-primary:hover {
+    background: var(--apple-blue-dark);
+    box-shadow: 0 4px 16px rgba(0, 122, 255, 0.35);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #34C759 0%, #30D158 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(52, 199, 89, 0.25);
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #30D158 0%, #32D74B 100%);
+    box-shadow: 0 4px 16px rgba(52, 199, 89, 0.35);
+}
+
+.btn-warning {
+    background: linear-gradient(135deg, #FF9500 0%, #FF9F0A 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(255, 149, 0, 0.25);
+}
+
+.btn-warning:hover {
+    background: linear-gradient(135deg, #FF9F0A 0%, #FFAA00 100%);
+    box-shadow: 0 4px 16px rgba(255, 149, 0, 0.35);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #FF3B30 0%, #FF453A 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(255, 59, 48, 0.25);
+}
+
+.btn-danger:hover {
+    background: linear-gradient(135deg, #FF453A 0%, #FF4D44 100%);
+    box-shadow: 0 4px 16px rgba(255, 59, 48, 0.35);
+}
+
+.btn-light {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--apple-gray-5);
+    border: 0.5px solid rgba(0, 0, 0, 0.06);
+    box-shadow: var(--shadow-sm);
+}
+
+.btn-light:hover {
+    background: rgba(255, 255, 255, 1);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+.btn-outline-primary {
+    background: transparent;
+    color: var(--apple-blue);
+    border: 1.5px solid var(--apple-blue);
+    box-shadow: none;
+}
+
+.btn-outline-primary:hover {
+    background: rgba(0, 122, 255, 0.08);
+    border-color: var(--apple-blue-dark);
+}
+
+/* Botones pequeños */
+.btn-sm {
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: var(--radius-sm);
+}
+
+/* Botones grandes */
+.btn-lg {
+    padding: 14px 28px;
+    font-size: 17px;
+    border-radius: var(--radius-lg);
+}
+
+/* ============================================================
+   INPUTS Y FORMULARIOS - Clean Apple Style
+   ============================================================ */
+.form-control,
+.form-select,
+.Select-control {
+    display: block;
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: var(--apple-gray-5);
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.2s var(--ease-smooth);
+    outline: none;
+}
+
+.form-control:hover,
+.form-select:hover {
+    border-color: rgba(0, 0, 0, 0.15) !important;
+    background: rgba(255, 255, 255, 1) !important;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--apple-blue) !important;
+    background: rgba(255, 255, 255, 1) !important;
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1), var(--shadow-sm);
+}
+
+.form-control::placeholder {
+    color: var(--apple-gray-4);
+    opacity: 1;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-size: 14px;
+    font-weight: 590;
+    color: var(--apple-gray-5);
+    letter-spacing: -0.02em;
+}
+
+/* Input groups */
+.input-group {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+}
+
+.input-group-text {
+    display: flex;
+    align-items: center;
+    padding: 11px 14px;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--apple-gray-4);
+    background: var(--apple-gray-1);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-md);
+}
+
+/* Números con spinners mejorados */
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Checkbox y radio personalizados */
+.form-check-input {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid rgba(0, 0, 0, 0.15);
+    border-radius: var(--radius-xs);
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-smooth);
+}
+
+.form-check-input:checked {
+    background-color: var(--apple-blue);
+    border-color: var(--apple-blue);
+    box-shadow: 0 2px 8px rgba(0, 122, 255, 0.25);
+}
+
+.form-check-input:focus {
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1);
+}
+
+/* ============================================================
+   NAVBAR - Translúcido macOS Perfecto
+   ============================================================ */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1030;
+    background: #007aff99 !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.03);
+    transition: all 0.3s var(--ease-smooth);
+    will-change: transform, background;
+}
+
+.navbar.scrolled {
+    background: rgba(255, 255, 255, 0.85) !important;
+    box-shadow: var(--shadow-md);
+}
+
+.navbar-brand {
+    font-size: 21px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--apple-gray-5);
+    transition: all 0.2s var(--ease-smooth);
+}
+
+.navbar-brand:hover {
+    color: var(--apple-blue);
+    transform: scale(1.02);
+}
+
+/* ============================================================
+   SIDEBAR - Animaciones iOS
+   ============================================================ */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 70px;
+    height: calc(100vh - 70px);
+    width: 260px;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border-right: 0.5px solid rgba(0, 0, 0, 0.06);
+    padding: var(--spacing-lg);
+    overflow-y: auto;
+    overflow-x: hidden;
+    z-index: 1020;
+    transition: transform 0.3s var(--ease-smooth);
+}
+
+.sidebar-button {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    width: 100%;
+    padding: 12px 16px;
+    margin-bottom: var(--spacing-xs);
+    font-size: 14px;
+    font-weight: 590;
+    letter-spacing: -0.02em;
+    color: var(--apple-gray-5);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.25s var(--ease-smooth);
+    text-align: left;
+    overflow: hidden;
+    outline: none;
+}
+
+.sidebar-button::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--apple-blue);
+    transform: scaleY(0);
+    transform-origin: center;
+    transition: transform 0.3s var(--ease-spring);
+    border-radius: 0 2px 2px 0;
+}
+
+.sidebar-button:hover {
+    background: rgba(0, 122, 255, 0.08);
+    color: var(--apple-blue);
+    transform: translateX(4px) var(--gpu-acceleration);
+}
+
+.sidebar-button:hover::before {
+    transform: scaleY(1);
+}
+
+.sidebar-button.active {
+    background: rgba(0, 122, 255, 0.12);
+    color: var(--apple-blue);
+    font-weight: 600;
+}
+
+.sidebar-button.active::before {
+    transform: scaleY(1);
+}
+
+.sidebar-button:active {
+    transform: translateX(2px) scale(0.98) var(--gpu-acceleration);
+    transition-duration: 0.1s;
+}
+
+.sidebar-button i {
+    font-size: 18px;
+    transition: transform 0.3s var(--ease-spring);
+}
+
+.sidebar-button:hover i {
+    transform: scale(1.1) var(--gpu-acceleration);
+}
+
+/* ============================================================
+   STAT CARDS - Micro-interacciones Premium
+   ============================================================ */
+.stat-card {
+    position: relative;
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.98) 100%);
+    border: 0.5px solid rgba(0, 0, 0, 0.04);
+    border-left: 3px solid;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+    transition: all 0.3s var(--ease-smooth);
+    will-change: transform, box-shadow;
+}
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(0, 122, 255, 0.03) 100%);
+    opacity: 0;
+    transition: opacity 0.3s var(--ease-smooth);
+    pointer-events: none;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px) var(--gpu-acceleration);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-card:hover::after {
+    opacity: 1;
+}
+
+.stat-card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    margin-bottom: var(--spacing-md);
+    font-size: 24px;
+    border-radius: var(--radius-md);
+    background: rgba(0, 122, 255, 0.1);
+    color: var(--apple-blue);
+    transition: all 0.3s var(--ease-spring);
+}
+
+.stat-card:hover .stat-card-icon {
+    transform: scale(1.1) rotate(5deg) var(--gpu-acceleration);
+}
+
+.stat-card-value {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--apple-gray-5);
+    line-height: 1;
+    margin-bottom: var(--spacing-xs);
+}
+
+.stat-card-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--apple-gray-4);
+    letter-spacing: -0.01em;
+}
+
+/* ============================================================
+   BADGES - Pills Modernos
+   ============================================================ */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    border-radius: var(--radius-full);
+    transition: all 0.2s var(--ease-smooth);
+    will-change: transform;
+}
+
+.badge:hover {
+    transform: translateY(-1px) scale(1.05) var(--gpu-acceleration);
+}
+
+.badge-primary {
+    background: rgba(0, 122, 255, 0.12);
+    color: var(--apple-blue);
+}
+
+.badge-success {
+    background: rgba(52, 199, 89, 0.12);
+    color: #248A3D;
+}
+
+.badge-warning {
+    background: rgba(255, 149, 0, 0.12);
+    color: #C93400;
+}
+
+.badge-danger {
+    background: rgba(255, 59, 48, 0.12);
+    color: #C91F17;
+}
+
+.badge-info {
+    background: rgba(90, 200, 250, 0.12);
+    color: #0071A4;
+}
+
+/* ============================================================
+   TABLAS - Design Limpio
+   ============================================================ */
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 var(--spacing-xs);
+}
+
+.table thead th {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--apple-gray-4);
+    background: var(--apple-gray-1);
+    border: none;
+    text-align: left;
+}
+
+.table thead th:first-child {
+    border-top-left-radius: var(--radius-md);
+    border-bottom-left-radius: var(--radius-md);
+}
+
+.table thead th:last-child {
+    border-top-right-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+}
+
+.table tbody tr {
+    background: rgba(255, 255, 255, 0.9);
+    transition: all 0.2s var(--ease-smooth);
+    will-change: transform, box-shadow;
+}
+
+.table tbody tr:hover {
+    background: rgba(255, 255, 255, 1);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px) var(--gpu-acceleration);
+}
+
+.table tbody td {
+    padding: var(--spacing-md) var(--spacing-lg);
+    font-size: 14px;
+    color: var(--apple-gray-5);
+    border: none;
+    vertical-align: middle;
+}
+
+.table tbody tr td:first-child {
+    border-top-left-radius: var(--radius-md);
+    border-bottom-left-radius: var(--radius-md);
+}
+
+.table tbody tr td:last-child {
+    border-top-right-radius: var(--radius-md);
+    border-bottom-right-radius: var(--radius-md);
+}
+
+/* ============================================================
+   ALERTS - Notificaciones iOS
+   ============================================================ */
+.alert {
+    position: relative;
+    padding: var(--spacing-md) var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    border: none;
+    font-size: 14px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+    animation: slideInUp 0.3s var(--ease-smooth);
+}
+
+.alert-info {
+    background: rgba(90, 200, 250, 0.12);
+    color: #0071A4;
+}
+
+.alert-success {
+    background: rgba(52, 199, 89, 0.12);
+    color: #248A3D;
+}
+
+.alert-warning {
+    background: rgba(255, 149, 0, 0.12);
+    color: #C93400;
+}
+
+.alert-danger {
+    background: rgba(255, 59, 48, 0.12);
+    color: #C91F17;
+}
+
+.alert-dismissible .btn-close {
+    padding: var(--spacing-sm);
+    opacity: 0.6;
+    transition: opacity 0.2s var(--ease-smooth);
+}
+
+.alert-dismissible .btn-close:hover {
+    opacity: 1;
+}
+
+/* ============================================================
+   MODAL - Estilo iOS Premium
+   ============================================================ */
+.modal {
+    backdrop-filter: blur(10px);
+}
+
+.modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 0.5px solid rgba(0, 0, 0, 0.04);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-2xl);
+    overflow: hidden;
+    animation: fadeInScale 0.3s var(--ease-spring);
+}
+
+.modal-header {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
+}
+
+.modal-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--apple-gray-5);
+}
+
+.modal-body {
+    padding: var(--spacing-xl);
+    font-size: 15px;
+    color: var(--apple-gray-5);
+}
+
+.modal-footer {
+    padding: var(--spacing-lg) var(--spacing-xl);
+    border-top: 0.5px solid rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================================
+   SCROLLBAR - macOS Style
+   ============================================================ */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: var(--radius-full);
+    transition: background 0.2s var(--ease-smooth);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+::-webkit-scrollbar-thumb:active {
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* Firefox scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
+
+/* ============================================================
+   SPINNERS - Loading States
+   ============================================================ */
+.spinner-border {
+    width: 2rem;
+    height: 2rem;
+    border-width: 2px;
+    border-color: currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.75s linear infinite;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+    border-width: 1.5px;
+}
+
+/* Skeleton loading */
+.skeleton {
+    background: linear-gradient(
+        90deg,
+        var(--apple-gray-1) 0%,
+        var(--apple-gray-2) 50%,
+        var(--apple-gray-1) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s ease-in-out infinite;
+    border-radius: var(--radius-md);
+}
+
+/* ============================================================
+   TOOLTIPS - Informativos
+   ============================================================ */
+.tooltip {
+    z-index: 1070;
+}
+
+.tooltip-inner {
+    max-width: 200px;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 12px;
+    font-weight: 500;
+    color: white;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-lg);
+}
+
+.tooltip-arrow {
+    display: none;
+}
+
+/* ============================================================
+   DROPDOWNS - Menús iOS
+   ============================================================ */
+.dropdown-menu {
+    padding: var(--spacing-xs);
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 0.5px solid rgba(0, 0, 0, 0.06);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-xl);
+    animation: fadeInScale 0.2s var(--ease-smooth);
+}
+
+.dropdown-item {
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--apple-gray-5);
+    border-radius: var(--radius-sm);
+    transition: all 0.15s var(--ease-smooth);
+}
+
+.dropdown-item:hover {
+    background: rgba(0, 122, 255, 0.08);
+    color: var(--apple-blue);
+}
+
+.dropdown-item:active {
+    background: rgba(0, 122, 255, 0.12);
+}
+
+.dropdown-divider {
+    height: 0.5px;
+    margin: var(--spacing-xs) 0;
+    background: rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================================
+   PROGRESS BARS - Animados
+   ============================================================ */
+.progress {
+    height: 6px;
+    background: var(--apple-gray-2);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, var(--apple-blue) 0%, #5AC8FA 100%);
+    border-radius: var(--radius-full);
+    transition: width 0.4s var(--ease-smooth);
+    position: relative;
+    overflow: hidden;
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+    );
+    animation: shimmer 2s infinite;
+}
+
+/* ============================================================
+   SELECT PERSONALIZADOS
+   ============================================================ */
+.Select-control {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid rgba(0, 0, 0, 0.1) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-sm) !important;
+    transition: all 0.2s var(--ease-smooth) !important;
+}
+
+.Select-control:hover {
+    border-color: rgba(0, 0, 0, 0.15) !important;
+}
+
+.Select-control.is-focused {
+    border-color: var(--apple-blue) !important;
+    box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.1), var(--shadow-sm) !important;
+}
+
+.Select-menu-outer {
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 0.5px solid rgba(0, 0, 0, 0.06) !important;
+    border-radius: var(--radius-md) !important;
+    box-shadow: var(--shadow-xl) !important;
+    margin-top: var(--spacing-xs);
+    animation: fadeInScale 0.2s var(--ease-smooth);
+}
+
+.Select-option {
+    padding: var(--spacing-sm) var(--spacing-md) !important;
+    font-size: 14px !important;
+    font-weight: 500;
+    transition: all 0.15s var(--ease-smooth) !important;
+}
+
+.Select-option.is-focused {
+    background: rgba(0, 122, 255, 0.08) !important;
+    color: var(--apple-blue) !important;
+}
+
+.Select-option.is-selected {
+    background: rgba(0, 122, 255, 0.12) !important;
+    color: var(--apple-blue) !important;
+    font-weight: 600;
+}
+
+/* ============================================================
+   GRAPHS - Plotly Mejorados
+   ============================================================ */
+.js-plotly-plot {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.js-plotly-plot .plotly {
+    border-radius: var(--radius-lg);
+}
+
+.js-plotly-plot .modebar {
+    top: 8px !important;
+    right: 8px !important;
+}
+
+.js-plotly-plot .modebar-btn {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-radius: var(--radius-sm) !important;
+    transition: all 0.2s var(--ease-smooth);
+}
+
+.js-plotly-plot .modebar-btn:hover {
+    background: rgba(255, 255, 255, 1) !important;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ============================================================
+   UTILIDADES - Helpers
+   ============================================================ */
+.text-muted {
+    color: var(--apple-gray-4) !important;
+}
+
+.bg-light {
+    background-color: var(--apple-gray-1) !important;
+}
+
+.border-light {
+    border-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* Efectos de hover suaves */
+.hover-lift {
+    transition: all 0.3s var(--ease-smooth);
+    will-change: transform;
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px) var(--gpu-acceleration);
+}
+
+/* Focus visible mejorado */
+*:focus-visible {
+    outline: 2px solid var(--apple-blue);
+    outline-offset: 2px;
+    border-radius: var(--radius-xs);
+}
+
+/* Prevenir FOUC */
+.fade-in-on-load {
+    opacity: 0;
+    animation: fadeIn 0.5s var(--ease-smooth) 0.1s forwards;
+}
+
+/* ============================================================
+   RESPONSIVE - Mobile First
+   ============================================================ */
+@media (max-width: 1024px) {
+    :root {
+        --spacing-md: 12px;
+        --spacing-lg: 20px;
+        --spacing-xl: 28px;
+    }
+    
+    .sidebar {
+        width: 240px;
+    }
+}
+
+@media (max-width: 768px) {
+    :root {
+        font-size: 15px;
+    }
+    
+    .card {
+        border-radius: var(--radius-md) !important;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+    
+    .form-control,
+    .form-select {
+        font-size: 16px; /* Previene zoom en iOS */
+        padding: 10px 12px;
+    }
+    
+    .sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+        top: 0;
+        border-right: none;
+        border-bottom: 0.5px solid rgba(0, 0, 0, 0.06);
+    }
+    
+    .sidebar-button {
+        font-size: 13px;
+        padding: 10px 14px;
+    }
+    
+    .navbar-brand {
+        font-size: 18px;
+    }
+    
+    .stat-card-value {
+        font-size: 28px;
+    }
+    
+    .modal-content {
+        border-radius: var(--radius-lg);
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --spacing-md: 10px;
+        --spacing-lg: 16px;
+        --spacing-xl: 24px;
+    }
+    
+    .btn {
+        padding: 9px 18px;
+        font-size: 13px;
+    }
+    
+    .stat-card {
+        padding: var(--spacing-md);
+    }
+}
+
+
+
+/* ============================================================
+   PRINT - Estilos de impresión
+   ============================================================ */
+@media print {
+    .navbar,
+    .sidebar,
+    .btn,
+    .modal {
+        display: none !important;
+    }
+    
+    .card {
+        box-shadow: none !important;
+        border: 1px solid #000 !important;
+    }
+}
+
+/* ============================================================
+   ACCESIBILIDAD - Reduced Motion
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+
+/* ============================================================
+   RESPONSIVE MOBILE - Sidebar Toggle
+   ============================================================ */
+
+/* Desktop: toggle button oculto */
+.sidebar-toggle-mobile {
+    display: none !important;
+}
+
+.sidebar-close-mobile {
+    display: none !important;
+}
+
+/* Tablet y menor (992px) */
+@media (max-width: 991.98px) {
+    /* Mostrar botón toggle */
+    .sidebar-toggle-mobile {
+        display: block !important;
+    }
+    
+    .sidebar-close-mobile {
+        display: block !important;
+    }
+    
+    /* Sidebar escondido por defecto en mobile */
+    #sidebar {
+        transform: translateX(-100%);
+    }
+    
+    #sidebar.open {
+        transform: translateX(0);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    /* Contenido ocupa todo el ancho */
+    #main-content-wrapper {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+    
+    /* Overlay backdrop */
+    #sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+        z-index: 1019;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    #sidebar-overlay.show {
+        display: block !important;
+        opacity: 1 !important;
+    }
+}
+
+/* Mobile (768px) */
+@media (max-width: 767.98px) {
+    .navbar-subtitle {
+        display: none !important;
+    }
+    
+    #sidebar {
+        width: 280px !important;
+    }
+}
+
+/* Mobile pequeño (576px) */
+@media (max-width: 575.98px) {
+    #sidebar {
+        width: calc(100% - 40px) !important;
+        max-width: 300px;
+    }
+}
