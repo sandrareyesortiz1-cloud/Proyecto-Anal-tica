@@ -1,0 +1,10 @@
+fastapi
+pydantic
+numpy
+pandas
+joblib
+requests
+plotly
+dash
+dash-bootstrap-components
+uvicorn
