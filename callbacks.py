@@ -102,176 +102,6 @@ def register_callbacks(app):
         if urbana is not None and 0 <= urbana <= 100:
             return round(100 - urbana, 1)
         return None
-    
-    # Callback para validar todos los campos antes de predecir
-    @app.callback(
-        [
-            Output("poblacion_menores", "invalid"),
-            Output("feedback-poblacion_menores", "children"),
-            Output("porc_poblacion_urbana", "invalid"),
-            Output("feedback-porc_poblacion_urbana", "children"),
-            Output("ipm", "invalid"),
-            Output("feedback-ipm", "children"),
-            Output("cobertura_acueducto", "invalid"),
-            Output("feedback-cobertura_acueducto", "children"),
-            Output("cobertura_alcantarillado", "invalid"),
-            Output("feedback-cobertura_alcantarillado", "children"),
-            Output("cobertura_energia", "invalid"),
-            Output("feedback-cobertura_energia", "children"),
-            Output("pib_per_capita", "invalid"),
-            Output("feedback-pib_per_capita", "children"),
-            Output("tasa_homicidio", "invalid"),
-            Output("feedback-tasa_homicidio", "children"),
-            Output("validation-alert", "children"),
-        ],
-        Input("btn-predict", "n_clicks"),
-        [
-            State("poblacion_menores", "value"),
-            State("porc_poblacion_urbana", "value"),
-            State("ipm", "value"),
-            State("cobertura_acueducto", "value"),
-            State("cobertura_alcantarillado", "value"),
-            State("cobertura_energia", "value"),
-            State("pib_per_capita", "value"),
-            State("tasa_homicidio", "value"),
-            State("sexo_victima", "value"),
-            State("grupo_edad_victima", "value"),
-            State("ciclo_vital", "value"),
-            State("escolaridad", "value"),
-            State("depto_hecho_dane", "value"),
-        ],
-        prevent_initial_call=True
-    )
-    def validar_formulario(n_clicks, pob_menores, porc_urb, ipm, cob_acue, 
-                          cob_alcan, cob_ener, pib, tasa_hom,
-                          sexo, grupo_edad, ciclo, escolaridad, depto):
-        """Validar todos los campos del formulario antes de realizar predicción"""
-        
-        errores = []
-        validaciones = []
-        
-        # Validar población menores
-        if pob_menores is None or pob_menores == "":
-            validaciones.extend([True, "Este campo es requerido"])
-            errores.append("Población menores")
-        elif pob_menores < 0:
-            validaciones.extend([True, "No puede ser negativo"])
-            errores.append("Población menores (valor negativo)")
-        elif pob_menores > 10000000:
-            validaciones.extend([True, "Valor poco realista (máx: 10 millones)"])
-            errores.append("Población menores (valor muy alto)")
-        else:
-            validaciones.extend([False, ""])
-        
-        # Validar % población urbana
-        if porc_urb is None or porc_urb == "":
-            validaciones.extend([True, "Este campo es requerido"])
-            errores.append("% Población urbana")
-        elif porc_urb < 0:
-            validaciones.extend([True, "No puede ser negativo"])
-            errores.append("% Población urbana (valor negativo)")
-        elif porc_urb > 100:
-            validaciones.extend([True, "No puede ser mayor a 100%"])
-            errores.append("% Población urbana (mayor a 100%)")
-        else:
-            validaciones.extend([False, ""])
-        
-        # Validar IPM
-        if ipm is None or ipm == "":
-            validaciones.extend([True, "Este campo es requerido"])
-            errores.append("IPM")
-        elif ipm < 0:
-            validaciones.extend([True, "No puede ser negativo"])
-            errores.append("IPM (valor negativo)")
-        elif ipm > 1:
-            validaciones.extend([True, "Debe estar entre 0 y 1"])
-            errores.append("IPM (debe estar entre 0 y 1)")
-        else:
-            validaciones.extend([False, ""])
-        
-        # Validar cobertura acueducto
-        if cob_acue is None or cob_acue == "":
-            validaciones.extend([True, "Este campo es requerido"])
-            errores.append("Cobertura acueducto")
-        elif cob_acue < 0 or cob_acue > 100:
-            validaciones.extend([True, "Debe estar entre 0 y 100%"])
-            errores.append("Cobertura acueducto (fuera de rango)")
-        else:
-            validaciones.extend([False, ""])
-        
-        # Validar cobertura alcantarillado
-        if cob_alcan is None or cob_alcan == "":
-            validaciones.extend([True, "Este campo es requerido"])
-            errores.append("Cobertura alcantarillado")
-        elif cob_alcan < 0 or cob_alcan > 100:
-            validaciones.extend([True, "Debe estar entre 0 y 100%"])
-            errores.append("Cobertura alcantarillado (fuera de rango)")
-        else:
-            validaciones.extend([False, ""])
-        
-        # Validar cobertura energía
-        if cob_ener is None or cob_ener == "":
-            validaciones.extend([True, "Este campo es requerido"])
-            errores.append("Cobertura energía")
-        elif cob_ener < 0 or cob_ener > 100:
-            validaciones.extend([True, "Debe estar entre 0 y 100%"])
-            errores.append("Cobertura energía (fuera de rango)")
-        else:
-            validaciones.extend([False, ""])
-        
-        # Validar PIB per cápita
-        if pib is None or pib == "":
-            validaciones.extend([True, "Este campo es requerido"])
-            errores.append("PIB per cápita")
-        elif pib < 0:
-            validaciones.extend([True, "No puede ser negativo"])
-            errores.append("PIB per cápita (valor negativo)")
-        elif pib > 1000000000:
-            validaciones.extend([True, "Valor poco realista (máx: 1,000 millones)"])
-            errores.append("PIB per cápita (valor muy alto)")
-        else:
-            validaciones.extend([False, ""])
-        
-        # Validar tasa homicidio
-        if tasa_hom is None or tasa_hom == "":
-            validaciones.extend([True, "Este campo es requerido"])
-            errores.append("Tasa homicidio")
-        elif tasa_hom < 0:
-            validaciones.extend([True, "No puede ser negativo"])
-            errores.append("Tasa homicidio (valor negativo)")
-        elif tasa_hom > 500:
-            validaciones.extend([True, "Valor poco realista (máx: 500 por 100k)"])
-            errores.append("Tasa homicidio (valor muy alto)")
-        else:
-            validaciones.extend([False, ""])
-        
-        # Validar campos categóricos
-        if not sexo:
-            errores.append("Sexo de la víctima")
-        if not grupo_edad:
-            errores.append("Grupo de edad")
-        if not ciclo:
-            errores.append("Ciclo vital")
-        if not escolaridad:
-            errores.append("Escolaridad")
-        if not depto:
-            errores.append("Departamento")
-        
-        # Crear alerta general si hay errores
-        if errores:
-            alert = dbc.Alert([
-                html.H6([
-                    html.I(className="bi bi-exclamation-triangle-fill me-2"),
-                    "Por favor corrija los siguientes campos:"
-                ], className="alert-heading mb-2", style={'fontSize': '14px', 'fontWeight': '600'}),
-                html.Ul([html.Li(error, style={'fontSize': '13px'}) for error in errores], 
-                       className="mb-0", style={'marginLeft': '20px'})
-            ], color="danger", className="mt-3", style={'borderRadius': '12px'})
-            validaciones.append(alert)
-        else:
-            validaciones.append(None)
-        
-        return validaciones
 
     # ========================================================================
     # NAVEGACIÓN ENTRE MÓDULOS
@@ -311,7 +141,24 @@ def register_callbacks(app):
     @app.callback(
         [Output('prediction-results', 'children'), 
          Output('prediction-loading', 'children'), 
-         Output('prediction-result-store', 'data')],
+         Output('prediction-result-store', 'data'),
+         Output("poblacion_menores", "invalid"),
+         Output("feedback-poblacion_menores", "children"),
+         Output("porc_poblacion_urbana", "invalid"),
+         Output("feedback-porc_poblacion_urbana", "children"),
+         Output("ipm", "invalid"),
+         Output("feedback-ipm", "children"),
+         Output("cobertura_acueducto", "invalid"),
+         Output("feedback-cobertura_acueducto", "children"),
+         Output("cobertura_alcantarillado", "invalid"),
+         Output("feedback-cobertura_alcantarillado", "children"),
+         Output("cobertura_energia", "invalid"),
+         Output("feedback-cobertura_energia", "children"),
+         Output("pib_per_capita", "invalid"),
+         Output("feedback-pib_per_capita", "children"),
+         Output("tasa_homicidio", "invalid"),
+         Output("feedback-tasa_homicidio", "children"),
+         Output("validation-alert", "children")],
         Input('btn-predict', 'n_clicks'),
         [State('poblacion_menores', 'value'), 
          State('porc_poblacion_urbana', 'value'), 
@@ -329,26 +176,134 @@ def register_callbacks(app):
          State('depto_hecho_dane', 'value')],
         prevent_initial_call=True
     )
-    def make_prediction(n_clicks, pob, urb, rur, ipm, acue, alc, ener, pib, hom, 
+    def make_prediction(n_clicks, pob, urb, rur, ipm, acue, alc, ener, pib_val, hom, 
                        sexo, edad, ciclo, escol, depto):
         """Realizar predicción con modelo CatBoost y mostrar resultados completos"""
         
         if n_clicks is None: 
-            return None, "", None
+            return None, "", None, False, "", False, "", False, "", False, "", False, "", False, "", False, "", False, "", None
         
-        # VALIDACIÓN PREVIA - Verificar que no haya campos None o vacíos
-        if any(v is None or v == "" for v in [pob, urb, rur, ipm, acue, alc, ener, pib, hom, 
-                                               sexo, edad, ciclo, escol, depto]):
-            return None, "", None  # Las validaciones ya mostraron los errores
+        # VALIDACIÓN INTEGRADA
+        errores = []
+        validaciones = []
         
-        # Validación de rangos - si hay errores, no continuar
-        if (pob < 0 or pob > 10000000 or 
-            urb < 0 or urb > 100 or 
-            ipm < 0 or ipm > 1 or
-            any(cob < 0 or cob > 100 for cob in [acue, alc, ener]) or
-            pib < 0 or pib > 1000000000 or
-            hom < 0 or hom > 500):
-            return None, "", None  # Las validaciones ya mostraron los errores
+        # Validar población menores
+        if pob is None or pob == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Población menores")
+        elif pob < 0:
+            validaciones.extend([True, "No puede ser negativo"])
+            errores.append("Población menores")
+        elif pob > 10000000:
+            validaciones.extend([True, "Valor muy alto (máx: 10M)"])
+            errores.append("Población menores")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar % población urbana
+        if urb is None or urb == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("% Población urbana")
+        elif urb < 0 or urb > 100:
+            validaciones.extend([True, "Debe estar entre 0-100%"])
+            errores.append("% Población urbana")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar IPM
+        if ipm is None or ipm == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("IPM")
+        elif ipm < 0 or ipm > 1:
+            validaciones.extend([True, "Debe estar entre 0-1"])
+            errores.append("IPM")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar cobertura acueducto
+        if acue is None or acue == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Cobertura acueducto")
+        elif acue < 0 or acue > 100:
+            validaciones.extend([True, "Debe estar entre 0-100%"])
+            errores.append("Cobertura acueducto")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar cobertura alcantarillado
+        if alc is None or alc == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Cobertura alcantarillado")
+        elif alc < 0 or alc > 100:
+            validaciones.extend([True, "Debe estar entre 0-100%"])
+            errores.append("Cobertura alcantarillado")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar cobertura energía
+        if ener is None or ener == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Cobertura energía")
+        elif ener < 0 or ener > 100:
+            validaciones.extend([True, "Debe estar entre 0-100%"])
+            errores.append("Cobertura energía")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar PIB per cápita
+        if pib_val is None or pib_val == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("PIB per cápita")
+        elif pib_val < 0:
+            validaciones.extend([True, "No puede ser negativo"])
+            errores.append("PIB per cápita")
+        elif pib_val > 1000000000:
+            validaciones.extend([True, "Valor muy alto (máx: 1,000M)"])
+            errores.append("PIB per cápita")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar tasa homicidio
+        if hom is None or hom == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Tasa homicidio")
+        elif hom < 0:
+            validaciones.extend([True, "No puede ser negativo"])
+            errores.append("Tasa homicidio")
+        elif hom > 500:
+            validaciones.extend([True, "Valor muy alto (máx: 500)"])
+            errores.append("Tasa homicidio")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar campos categóricos
+        if not sexo:
+            errores.append("Sexo de la víctima")
+        if not edad:
+            errores.append("Grupo de edad")
+        if not ciclo:
+            errores.append("Ciclo vital")
+        if not escol:
+            errores.append("Escolaridad")
+        if not depto:
+            errores.append("Departamento")
+        
+        # Si hay errores, mostrar alerta y retornar sin hacer predicción
+        if errores:
+            alert = dbc.Alert([
+                html.H6([
+                    html.I(className="bi bi-exclamation-triangle-fill me-2"),
+                    "Por favor corrija los siguientes campos:"
+                ], className="alert-heading mb-2", style={'fontSize': '14px', 'fontWeight': '600'}),
+                html.Ul([html.Li(error, style={'fontSize': '13px'}) for error in errores], 
+                       className="mb-0", style={'marginLeft': '20px'})
+            ], color="danger", className="mt-3", style={'borderRadius': '12px'})
+            validaciones.append(alert)
+            return None, "", None, *validaciones
+        
+        # SI NO HAY ERRORES, PROCEDER CON LA PREDICCIÓN
+        # Limpiar validaciones (todos en False)
+        validaciones.append(None)  # validation-alert
         
         # Preparar datos para la API
         data = {
@@ -359,7 +314,7 @@ def register_callbacks(app):
             "cobertura_acueducto": float(acue), 
             "cobertura_alcantarillado": float(alc), 
             "cobertura_energia": float(ener), 
-            "pib_per_capita": float(pib), 
+            "pib_per_capita": float(pib_val), 
             "tasa_homicidio": float(hom), 
             "sexo_victima": sexo, 
             "grupo_edad_victima": edad, 
@@ -372,10 +327,11 @@ def register_callbacks(app):
         result = predict_catboost(data)
         
         if result is None: 
-            return dbc.Alert([
+            error_alert = dbc.Alert([
                 html.I(className="bi bi-exclamation-triangle-fill me-2"),
                 "Error al conectar con la API. Verifique la conexión."
-            ], color="danger", dismissable=True, className="fade-in"), "", None
+            ], color="danger", dismissable=True, className="fade-in")
+            return error_alert, "", None, False, "", False, "", False, "", False, "", False, "", False, "", False, "", False, "", None
         
         # Extraer predicción
         prediccion = result.get('prediccion', 0)
@@ -570,7 +526,6 @@ def register_callbacks(app):
         ])
         
         return results, "", result
-
     # ========================================================================
     # RESTO DE CALLBACKS (clusters, alertas, simulador, recomendaciones)
     # ========================================================================
