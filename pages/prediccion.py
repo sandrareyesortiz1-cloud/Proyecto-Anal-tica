@@ -1,9 +1,9 @@
-from dash import html, dcc
+from dash import html, dcc, Input, Output, State
 import dash_bootstrap_components as dbc
 from config import COLORS, SEXO_OPTIONS, GRUPO_EDAD_OPTIONS, CICLO_VITAL_OPTIONS, ESCOLARIDAD_OPTIONS, DEPARTAMENTOS
 
 def create_prediction_module():
-    """Crear interfaz del módulo de predicción"""
+    """Crear interfaz del módulo de predicción con validaciones"""
     return dbc.Container([
         # Header
         dbc.Row([
@@ -38,39 +38,60 @@ def create_prediction_module():
                             
                             dbc.Row([
                                 dbc.Col([
-                                    dbc.Label("Población Menores", html_for="poblacion_menores",
+                                    dbc.Label([
+                                        "Población Menores ",
+                                        html.Span("*", style={'color': COLORS['danger']})
+                                    ], html_for="poblacion_menores",
                                              style={'fontSize': '13px', 'fontWeight': '500', 
                                                    'color': COLORS['neutral']}),
                                     dbc.Input(id="poblacion_menores", type="number", 
-                                             value=12345, step=1,
-                                             style={'fontSize': '14px'})
+                                             placeholder="Ej: 12345",
+                                             min=0, step=1,
+                                             style={'fontSize': '14px'}),
+                                    dbc.FormFeedback(id="feedback-poblacion_menores", type="invalid")
                                 ], md=6, className="mb-3"),
                                 dbc.Col([
-                                    dbc.Label("% Población Urbana", html_for="porc_poblacion_urbana",
+                                    dbc.Label([
+                                        "% Población Urbana ",
+                                        html.Span("*", style={'color': COLORS['danger']})
+                                    ], html_for="porc_poblacion_urbana",
                                              style={'fontSize': '13px', 'fontWeight': '500', 
                                                    'color': COLORS['neutral']}),
                                     dbc.Input(id="porc_poblacion_urbana", type="number", 
-                                             value=78.5, step=0.1, min=0, max=100,
-                                             style={'fontSize': '14px'})
+                                             placeholder="Ej: 78.5",
+                                             min=0, max=100, step=0.1,
+                                             style={'fontSize': '14px'}),
+                                    dbc.FormFeedback(id="feedback-porc_poblacion_urbana", type="invalid")
                                 ], md=6, className="mb-3")
                             ]),
                             
                             dbc.Row([
                                 dbc.Col([
-                                    dbc.Label("% Población Rural", html_for="porc_poblacion_rural",
+                                    dbc.Label([
+                                        "% Población Rural ",
+                                        html.Span("*", style={'color': COLORS['danger']})
+                                    ], html_for="porc_poblacion_rural",
                                              style={'fontSize': '13px', 'fontWeight': '500', 
                                                    'color': COLORS['neutral']}),
                                     dbc.Input(id="porc_poblacion_rural", type="number", 
-                                             value=21.5, step=0.1, min=0, max=100,
-                                             style={'fontSize': '14px'})
+                                             placeholder="Calculado automáticamente",
+                                             disabled=True,
+                                             style={'fontSize': '14px', 'backgroundColor': '#f8f9fa'}),
+                                    dbc.FormText("Se calcula automáticamente (100 - % urbana)")
                                 ], md=6, className="mb-3"),
                                 dbc.Col([
-                                    dbc.Label("IPM", html_for="ipm",
+                                    dbc.Label([
+                                        "IPM (Índice Pobreza Multidimensional) ",
+                                        html.Span("*", style={'color': COLORS['danger']})
+                                    ], html_for="ipm",
                                              style={'fontSize': '13px', 'fontWeight': '500', 
                                                    'color': COLORS['neutral']}),
                                     dbc.Input(id="ipm", type="number", 
-                                             value=0.23, step=0.01, min=0, max=1,
-                                             style={'fontSize': '14px'})
+                                             placeholder="Ej: 0.23",
+                                             min=0, max=1, step=0.01,
+                                             style={'fontSize': '14px'}),
+                                    dbc.FormFeedback(id="feedback-ipm", type="invalid"),
+                                    dbc.FormText("Valor entre 0 y 1")
                                 ], md=6, className="mb-3")
                             ])
                         ]),
@@ -88,28 +109,43 @@ def create_prediction_module():
                             
                             dbc.Row([
                                 dbc.Col([
-                                    dbc.Label("Acueducto", html_for="cobertura_acueducto",
+                                    dbc.Label([
+                                        "Acueducto ",
+                                        html.Span("*", style={'color': COLORS['danger']})
+                                    ], html_for="cobertura_acueducto",
                                              style={'fontSize': '13px', 'fontWeight': '500', 
                                                    'color': COLORS['neutral']}),
                                     dbc.Input(id="cobertura_acueducto", type="number", 
-                                             value=92, step=0.1, min=0, max=100,
-                                             style={'fontSize': '14px'})
+                                             placeholder="Ej: 92",
+                                             min=0, max=100, step=0.1,
+                                             style={'fontSize': '14px'}),
+                                    dbc.FormFeedback(id="feedback-cobertura_acueducto", type="invalid")
                                 ], md=4, className="mb-3"),
                                 dbc.Col([
-                                    dbc.Label("Alcantarillado", html_for="cobertura_alcantarillado",
+                                    dbc.Label([
+                                        "Alcantarillado ",
+                                        html.Span("*", style={'color': COLORS['danger']})
+                                    ], html_for="cobertura_alcantarillado",
                                              style={'fontSize': '13px', 'fontWeight': '500', 
                                                    'color': COLORS['neutral']}),
                                     dbc.Input(id="cobertura_alcantarillado", type="number", 
-                                             value=88, step=0.1, min=0, max=100,
-                                             style={'fontSize': '14px'})
+                                             placeholder="Ej: 88",
+                                             min=0, max=100, step=0.1,
+                                             style={'fontSize': '14px'}),
+                                    dbc.FormFeedback(id="feedback-cobertura_alcantarillado", type="invalid")
                                 ], md=4, className="mb-3"),
                                 dbc.Col([
-                                    dbc.Label("Energía", html_for="cobertura_energia",
+                                    dbc.Label([
+                                        "Energía ",
+                                        html.Span("*", style={'color': COLORS['danger']})
+                                    ], html_for="cobertura_energia",
                                              style={'fontSize': '13px', 'fontWeight': '500', 
                                                    'color': COLORS['neutral']}),
                                     dbc.Input(id="cobertura_energia", type="number", 
-                                             value=98, step=0.1, min=0, max=100,
-                                             style={'fontSize': '14px'})
+                                             placeholder="Ej: 98",
+                                             min=0, max=100, step=0.1,
+                                             style={'fontSize': '14px'}),
+                                    dbc.FormFeedback(id="feedback-cobertura_energia", type="invalid")
                                 ], md=4, className="mb-3")
                             ])
                         ]),
@@ -127,20 +163,31 @@ def create_prediction_module():
                             
                             dbc.Row([
                                 dbc.Col([
-                                    dbc.Label("PIB per cápita", html_for="pib_per_capita",
+                                    dbc.Label([
+                                        "PIB per cápita (COP) ",
+                                        html.Span("*", style={'color': COLORS['danger']})
+                                    ], html_for="pib_per_capita",
                                              style={'fontSize': '13px', 'fontWeight': '500', 
                                                    'color': COLORS['neutral']}),
                                     dbc.Input(id="pib_per_capita", type="number", 
-                                             value=17168300, step=1000,
-                                             style={'fontSize': '14px'})
+                                             placeholder="Ej: 17168300",
+                                             min=0, step=1000,
+                                             style={'fontSize': '14px'}),
+                                    dbc.FormFeedback(id="feedback-pib_per_capita", type="invalid"),
+                                    dbc.FormText("Valor en pesos colombianos")
                                 ], md=6, className="mb-3"),
                                 dbc.Col([
-                                    dbc.Label("Tasa Homicidio", html_for="tasa_homicidio",
+                                    dbc.Label([
+                                        "Tasa Homicidio (por 100k hab) ",
+                                        html.Span("*", style={'color': COLORS['danger']})
+                                    ], html_for="tasa_homicidio",
                                              style={'fontSize': '13px', 'fontWeight': '500', 
                                                    'color': COLORS['neutral']}),
                                     dbc.Input(id="tasa_homicidio", type="number", 
-                                             value=12.3, step=0.1,
-                                             style={'fontSize': '14px'})
+                                             placeholder="Ej: 12.3",
+                                             min=0, step=0.1,
+                                             style={'fontSize': '14px'}),
+                                    dbc.FormFeedback(id="feedback-tasa_homicidio", type="invalid")
                                 ], md=6, className="mb-3")
                             ])
                         ]),
@@ -158,38 +205,47 @@ def create_prediction_module():
                             
                             dbc.Row([
                                 dbc.Col([
-                                    dbc.Label("Sexo", html_for="sexo_victima",
+                                    dbc.Label([
+                                        "Sexo ",
+                                        html.Span("*", style={'color': COLORS['danger']})
+                                    ], html_for="sexo_victima",
                                              style={'fontSize': '13px', 'fontWeight': '500', 
                                                    'color': COLORS['neutral']}),
                                     dcc.Dropdown(
                                         id="sexo_victima",
                                         options=[{'label': s, 'value': s} for s in SEXO_OPTIONS],
-                                        value='F',
+                                        placeholder="Seleccione...",
                                         clearable=False,
                                         style={'fontSize': '14px'}
                                     )
                                 ], md=4, className="mb-3"),
                                 dbc.Col([
-                                    dbc.Label("Grupo de Edad", html_for="grupo_edad_victima",
+                                    dbc.Label([
+                                        "Grupo de Edad ",
+                                        html.Span("*", style={'color': COLORS['danger']})
+                                    ], html_for="grupo_edad_victima",
                                              style={'fontSize': '13px', 'fontWeight': '500', 
                                                    'color': COLORS['neutral']}),
                                     dcc.Dropdown(
                                         id="grupo_edad_victima",
                                         options=[{'label': g, 'value': g} for g in GRUPO_EDAD_OPTIONS],
-                                        value='10-14',
+                                        placeholder="Seleccione...",
                                         clearable=False,
                                         style={'fontSize': '14px'}
                                     )
                                 ], md=4, className="mb-3"),
                                 dbc.Col([
-                                    dbc.Label("Ciclo Vital", html_for="ciclo_vital",
+                                    dbc.Label([
+                                        "Ciclo Vital ",
+                                        html.Span("*", style={'color': COLORS['danger']})
+                                    ], html_for="ciclo_vital",
                                              style={'fontSize': '13px', 'fontWeight': '500', 
                                                    'color': COLORS['neutral']}),
                                     dcc.Dropdown(
                                         id="ciclo_vital",
                                         options=[{'label': c.replace('_', ' ').title(), 'value': c} 
                                                 for c in CICLO_VITAL_OPTIONS],
-                                        value='adolescencia',
+                                        placeholder="Seleccione...",
                                         clearable=False,
                                         style={'fontSize': '14px'}
                                     )
@@ -198,26 +254,32 @@ def create_prediction_module():
                             
                             dbc.Row([
                                 dbc.Col([
-                                    dbc.Label("Escolaridad", html_for="escolaridad",
+                                    dbc.Label([
+                                        "Escolaridad ",
+                                        html.Span("*", style={'color': COLORS['danger']})
+                                    ], html_for="escolaridad",
                                              style={'fontSize': '13px', 'fontWeight': '500', 
                                                    'color': COLORS['neutral']}),
                                     dcc.Dropdown(
                                         id="escolaridad",
                                         options=[{'label': e.replace('_', ' ').title(), 'value': e} 
                                                 for e in ESCOLARIDAD_OPTIONS],
-                                        value='secundaria_incompleta',
+                                        placeholder="Seleccione...",
                                         clearable=False,
                                         style={'fontSize': '14px'}
                                     )
                                 ], md=6, className="mb-3"),
                                 dbc.Col([
-                                    dbc.Label("Departamento", html_for="depto_hecho_dane",
+                                    dbc.Label([
+                                        "Departamento ",
+                                        html.Span("*", style={'color': COLORS['danger']})
+                                    ], html_for="depto_hecho_dane",
                                              style={'fontSize': '13px', 'fontWeight': '500', 
                                                    'color': COLORS['neutral']}),
                                     dcc.Dropdown(
                                         id="depto_hecho_dane",
                                         options=[{'label': d, 'value': d} for d in DEPARTAMENTOS],
-                                        value='Bolívar',
+                                        placeholder="Seleccione...",
                                         clearable=False,
                                         searchable=True,
                                         style={'fontSize': '14px'}
@@ -225,6 +287,9 @@ def create_prediction_module():
                                 ], md=6, className="mb-3")
                             ])
                         ]),
+                        
+                        # Alerta de validación general
+                        html.Div(id="validation-alert", className="mt-3"),
                         
                         # Botón de cálculo
                         dbc.Button(
@@ -250,3 +315,186 @@ def create_prediction_module():
             ], md=7)
         ])
     ], fluid=True, style={'maxWidth': '1600px'})
+
+
+def register_validation_callbacks(app):
+    """Registrar callbacks para validaciones del formulario"""
+    
+    # Callback para calcular automáticamente población rural
+    @app.callback(
+        Output("porc_poblacion_rural", "value"),
+        Input("porc_poblacion_urbana", "value"),
+        prevent_initial_call=True
+    )
+    def calcular_poblacion_rural(urbana):
+        if urbana is not None and 0 <= urbana <= 100:
+            return round(100 - urbana, 1)
+        return None
+    
+    # Callback para validar todos los campos al hacer clic en predecir
+    @app.callback(
+        [
+            Output("poblacion_menores", "invalid"),
+            Output("feedback-poblacion_menores", "children"),
+            Output("porc_poblacion_urbana", "invalid"),
+            Output("feedback-porc_poblacion_urbana", "children"),
+            Output("ipm", "invalid"),
+            Output("feedback-ipm", "children"),
+            Output("cobertura_acueducto", "invalid"),
+            Output("feedback-cobertura_acueducto", "children"),
+            Output("cobertura_alcantarillado", "invalid"),
+            Output("feedback-cobertura_alcantarillado", "children"),
+            Output("cobertura_energia", "invalid"),
+            Output("feedback-cobertura_energia", "children"),
+            Output("pib_per_capita", "invalid"),
+            Output("feedback-pib_per_capita", "children"),
+            Output("tasa_homicidio", "invalid"),
+            Output("feedback-tasa_homicidio", "children"),
+            Output("validation-alert", "children"),
+        ],
+        Input("btn-predict", "n_clicks"),
+        [
+            State("poblacion_menores", "value"),
+            State("porc_poblacion_urbana", "value"),
+            State("ipm", "value"),
+            State("cobertura_acueducto", "value"),
+            State("cobertura_alcantarillado", "value"),
+            State("cobertura_energia", "value"),
+            State("pib_per_capita", "value"),
+            State("tasa_homicidio", "value"),
+            State("sexo_victima", "value"),
+            State("grupo_edad_victima", "value"),
+            State("ciclo_vital", "value"),
+            State("escolaridad", "value"),
+            State("depto_hecho_dane", "value"),
+        ],
+        prevent_initial_call=True
+    )
+    def validar_formulario(n_clicks, pob_menores, porc_urb, ipm, cob_acue, 
+                          cob_alcan, cob_ener, pib, tasa_hom,
+                          sexo, grupo_edad, ciclo, escolaridad, depto):
+        
+        errores = []
+        validaciones = []
+        
+        # Validar población menores
+        if pob_menores is None or pob_menores == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Población menores")
+        elif pob_menores < 0:
+            validaciones.extend([True, "No puede ser negativo"])
+            errores.append("Población menores")
+        elif pob_menores > 10000000:
+            validaciones.extend([True, "Valor poco realista (máx: 10 millones)"])
+            errores.append("Población menores")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar % población urbana
+        if porc_urb is None or porc_urb == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("% Población urbana")
+        elif porc_urb < 0:
+            validaciones.extend([True, "No puede ser negativo"])
+            errores.append("% Población urbana")
+        elif porc_urb > 100:
+            validaciones.extend([True, "No puede ser mayor a 100%"])
+            errores.append("% Población urbana")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar IPM
+        if ipm is None or ipm == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("IPM")
+        elif ipm < 0:
+            validaciones.extend([True, "No puede ser negativo"])
+            errores.append("IPM")
+        elif ipm > 1:
+            validaciones.extend([True, "Debe estar entre 0 y 1"])
+            errores.append("IPM")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar cobertura acueducto
+        if cob_acue is None or cob_acue == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Cobertura acueducto")
+        elif cob_acue < 0 or cob_acue > 100:
+            validaciones.extend([True, "Debe estar entre 0 y 100%"])
+            errores.append("Cobertura acueducto")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar cobertura alcantarillado
+        if cob_alcan is None or cob_alcan == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Cobertura alcantarillado")
+        elif cob_alcan < 0 or cob_alcan > 100:
+            validaciones.extend([True, "Debe estar entre 0 y 100%"])
+            errores.append("Cobertura alcantarillado")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar cobertura energía
+        if cob_ener is None or cob_ener == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Cobertura energía")
+        elif cob_ener < 0 or cob_ener > 100:
+            validaciones.extend([True, "Debe estar entre 0 y 100%"])
+            errores.append("Cobertura energía")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar PIB per cápita
+        if pib is None or pib == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("PIB per cápita")
+        elif pib < 0:
+            validaciones.extend([True, "No puede ser negativo"])
+            errores.append("PIB per cápita")
+        elif pib > 1000000000:
+            validaciones.extend([True, "Valor poco realista (máx: 1,000 millones)"])
+            errores.append("PIB per cápita")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar tasa homicidio
+        if tasa_hom is None or tasa_hom == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Tasa homicidio")
+        elif tasa_hom < 0:
+            validaciones.extend([True, "No puede ser negativo"])
+            errores.append("Tasa homicidio")
+        elif tasa_hom > 500:
+            validaciones.extend([True, "Valor poco realista (máx: 500 por 100k)"])
+            errores.append("Tasa homicidio")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar campos categóricos
+        if not sexo:
+            errores.append("Sexo")
+        if not grupo_edad:
+            errores.append("Grupo de edad")
+        if not ciclo:
+            errores.append("Ciclo vital")
+        if not escolaridad:
+            errores.append("Escolaridad")
+        if not depto:
+            errores.append("Departamento")
+        
+        # Crear alerta general si hay errores
+        if errores:
+            alert = dbc.Alert([
+                html.H6([
+                    html.I(className="bi bi-exclamation-triangle-fill me-2"),
+                    "Por favor corrija los siguientes campos:"
+                ], className="alert-heading mb-2"),
+                html.Ul([html.Li(error) for error in errores], className="mb-0")
+            ], color="danger", className="mt-3")
+            validaciones.append(alert)
+        else:
+            validaciones.append(None)
+        
+        return validaciones
