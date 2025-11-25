@@ -67,7 +67,6 @@ def register_callbacks(app):
         return dash.no_update, dash.no_update
     
     
-    
     # ========================================================================
     # HEALTH CHECK
     # ========================================================================
@@ -92,6 +91,191 @@ def register_callbacks(app):
             style={'fontSize': '13px', 'fontWeight': '500'}
         )
         return None, badge
+    # ========================================================================
+    # VALIDACIONES FORMULARIO DE PREDICCIÓN
+    # ========================================================================
+    
+    # Callback para calcular automáticamente población rural
+    @app.callback(
+        Output("porc_poblacion_rural", "value"),
+        Input("porc_poblacion_urbana", "value"),
+        prevent_initial_call=True
+    )
+    def calcular_poblacion_rural(urbana):
+        """Calcular automáticamente población rural basada en urbana"""
+        if urbana is not None and 0 <= urbana <= 100:
+            return round(100 - urbana, 1)
+        return None
+    
+    # Callback para validar todos los campos antes de predecir
+    @app.callback(
+        [
+            Output("poblacion_menores", "invalid"),
+            Output("feedback-poblacion_menores", "children"),
+            Output("porc_poblacion_urbana", "invalid"),
+            Output("feedback-porc_poblacion_urbana", "children"),
+            Output("ipm", "invalid"),
+            Output("feedback-ipm", "children"),
+            Output("cobertura_acueducto", "invalid"),
+            Output("feedback-cobertura_acueducto", "children"),
+            Output("cobertura_alcantarillado", "invalid"),
+            Output("feedback-cobertura_alcantarillado", "children"),
+            Output("cobertura_energia", "invalid"),
+            Output("feedback-cobertura_energia", "children"),
+            Output("pib_per_capita", "invalid"),
+            Output("feedback-pib_per_capita", "children"),
+            Output("tasa_homicidio", "invalid"),
+            Output("feedback-tasa_homicidio", "children"),
+            Output("validation-alert", "children"),
+        ],
+        Input("btn-predict", "n_clicks"),
+        [
+            State("poblacion_menores", "value"),
+            State("porc_poblacion_urbana", "value"),
+            State("ipm", "value"),
+            State("cobertura_acueducto", "value"),
+            State("cobertura_alcantarillado", "value"),
+            State("cobertura_energia", "value"),
+            State("pib_per_capita", "value"),
+            State("tasa_homicidio", "value"),
+            State("sexo_victima", "value"),
+            State("grupo_edad_victima", "value"),
+            State("ciclo_vital", "value"),
+            State("escolaridad", "value"),
+            State("depto_hecho_dane", "value"),
+        ],
+        prevent_initial_call=True
+    )
+    def validar_formulario(n_clicks, pob_menores, porc_urb, ipm, cob_acue, 
+                          cob_alcan, cob_ener, pib, tasa_hom,
+                          sexo, grupo_edad, ciclo, escolaridad, depto):
+        """Validar todos los campos del formulario antes de realizar predicción"""
+        
+        errores = []
+        validaciones = []
+        
+        # Validar población menores
+        if pob_menores is None or pob_menores == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Población menores")
+        elif pob_menores < 0:
+            validaciones.extend([True, "No puede ser negativo"])
+            errores.append("Población menores (valor negativo)")
+        elif pob_menores > 10000000:
+            validaciones.extend([True, "Valor poco realista (máx: 10 millones)"])
+            errores.append("Población menores (valor muy alto)")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar % población urbana
+        if porc_urb is None or porc_urb == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("% Población urbana")
+        elif porc_urb < 0:
+            validaciones.extend([True, "No puede ser negativo"])
+            errores.append("% Población urbana (valor negativo)")
+        elif porc_urb > 100:
+            validaciones.extend([True, "No puede ser mayor a 100%"])
+            errores.append("% Población urbana (mayor a 100%)")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar IPM
+        if ipm is None or ipm == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("IPM")
+        elif ipm < 0:
+            validaciones.extend([True, "No puede ser negativo"])
+            errores.append("IPM (valor negativo)")
+        elif ipm > 1:
+            validaciones.extend([True, "Debe estar entre 0 y 1"])
+            errores.append("IPM (debe estar entre 0 y 1)")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar cobertura acueducto
+        if cob_acue is None or cob_acue == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Cobertura acueducto")
+        elif cob_acue < 0 or cob_acue > 100:
+            validaciones.extend([True, "Debe estar entre 0 y 100%"])
+            errores.append("Cobertura acueducto (fuera de rango)")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar cobertura alcantarillado
+        if cob_alcan is None or cob_alcan == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Cobertura alcantarillado")
+        elif cob_alcan < 0 or cob_alcan > 100:
+            validaciones.extend([True, "Debe estar entre 0 y 100%"])
+            errores.append("Cobertura alcantarillado (fuera de rango)")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar cobertura energía
+        if cob_ener is None or cob_ener == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Cobertura energía")
+        elif cob_ener < 0 or cob_ener > 100:
+            validaciones.extend([True, "Debe estar entre 0 y 100%"])
+            errores.append("Cobertura energía (fuera de rango)")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar PIB per cápita
+        if pib is None or pib == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("PIB per cápita")
+        elif pib < 0:
+            validaciones.extend([True, "No puede ser negativo"])
+            errores.append("PIB per cápita (valor negativo)")
+        elif pib > 1000000000:
+            validaciones.extend([True, "Valor poco realista (máx: 1,000 millones)"])
+            errores.append("PIB per cápita (valor muy alto)")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar tasa homicidio
+        if tasa_hom is None or tasa_hom == "":
+            validaciones.extend([True, "Este campo es requerido"])
+            errores.append("Tasa homicidio")
+        elif tasa_hom < 0:
+            validaciones.extend([True, "No puede ser negativo"])
+            errores.append("Tasa homicidio (valor negativo)")
+        elif tasa_hom > 500:
+            validaciones.extend([True, "Valor poco realista (máx: 500 por 100k)"])
+            errores.append("Tasa homicidio (valor muy alto)")
+        else:
+            validaciones.extend([False, ""])
+        
+        # Validar campos categóricos
+        if not sexo:
+            errores.append("Sexo de la víctima")
+        if not grupo_edad:
+            errores.append("Grupo de edad")
+        if not ciclo:
+            errores.append("Ciclo vital")
+        if not escolaridad:
+            errores.append("Escolaridad")
+        if not depto:
+            errores.append("Departamento")
+        
+        # Crear alerta general si hay errores
+        if errores:
+            alert = dbc.Alert([
+                html.H6([
+                    html.I(className="bi bi-exclamation-triangle-fill me-2"),
+                    "Por favor corrija los siguientes campos:"
+                ], className="alert-heading mb-2", style={'fontSize': '14px'}),
+                html.Ul([html.Li(error, style={'fontSize': '13px'}) for error in errores], 
+                       className="mb-0")
+            ], color="danger", className="mt-3", style={'borderRadius': '12px'})
+            validaciones.append(alert)
+        else:
+            validaciones.append(None)
+        
+        return validaciones
 
     # ========================================================================
     # NAVEGACIÓN ENTRE MÓDULOS
@@ -129,253 +313,264 @@ def register_callbacks(app):
     # PREDICCIÓN CATBOOST - COMPLETO
     # ========================================================================
     @app.callback(
-        [Output('prediction-results', 'children'), 
-         Output('prediction-loading', 'children'), 
-         Output('prediction-result-store', 'data')],
-        Input('btn-predict', 'n_clicks'),
-        [State('poblacion_menores', 'value'), 
-         State('porc_poblacion_urbana', 'value'), 
-         State('porc_poblacion_rural', 'value'),
-         State('ipm', 'value'), 
-         State('cobertura_acueducto', 'value'), 
-         State('cobertura_alcantarillado', 'value'),
-         State('cobertura_energia', 'value'), 
-         State('pib_per_capita', 'value'), 
-         State('tasa_homicidio', 'value'),
-         State('sexo_victima', 'value'), 
-         State('grupo_edad_victima', 'value'), 
-         State('ciclo_vital', 'value'),
-         State('escolaridad', 'value'), 
-         State('depto_hecho_dane', 'value')],
-        prevent_initial_call=True
-    )
+    [Output('prediction-results', 'children'), 
+     Output('prediction-loading', 'children'), 
+     Output('prediction-result-store', 'data')],
+    Input('btn-predict', 'n_clicks'),
+    [State('poblacion_menores', 'value'), 
+     State('porc_poblacion_urbana', 'value'), 
+     State('porc_poblacion_rural', 'value'),
+     State('ipm', 'value'), 
+     State('cobertura_acueducto', 'value'), 
+     State('cobertura_alcantarillado', 'value'),
+     State('cobertura_energia', 'value'), 
+     State('pib_per_capita', 'value'), 
+     State('tasa_homicidio', 'value'),
+     State('sexo_victima', 'value'), 
+     State('grupo_edad_victima', 'value'), 
+     State('ciclo_vital', 'value'),
+     State('escolaridad', 'value'), 
+     State('depto_hecho_dane', 'value')],
+    prevent_initial_call=True
+)
     def make_prediction(n_clicks, pob, urb, rur, ipm, acue, alc, ener, pib, hom, 
-                       sexo, edad, ciclo, escol, depto):
-        """Realizar predicción con modelo CatBoost y mostrar resultados completos"""
+                   sexo, edad, ciclo, escol, depto):
+
         
         if n_clicks is None: 
             return None, "", None
         
-        # Preparar datos para la API
-        data = {
-            "poblacion_menores": float(pob), 
-            "porc_poblacion_urbana": float(urb), 
-            "porc_poblacion_rural": float(rur), 
-            "ipm": float(ipm), 
-            "cobertura_acueducto": float(acue), 
-            "cobertura_alcantarillado": float(alc), 
-            "cobertura_energia": float(ener), 
-            "pib_per_capita": float(pib), 
-            "tasa_homicidio": float(hom), 
-            "sexo_victima": sexo, 
-            "grupo_edad_victima": edad, 
-            "ciclo_vital": ciclo, 
-            "escolaridad": escol, 
-            "depto_hecho_dane": depto
-        }
+        # VALIDACIÓN PREVIA - Si algún campo es None o inválido, no hacer predicción
+        campos_requeridos = [pob, urb, rur, ipm, acue, alc, ener, pib, hom, 
+                            sexo, edad, ciclo, escol, depto]
         
-        # Llamar a la API
-        result = predict_catboost(data)
-        
-        if result is None: 
+        if any(campo is None or campo == "" for campo in campos_requeridos):
             return dbc.Alert([
                 html.I(className="bi bi-exclamation-triangle-fill me-2"),
-                "Error al conectar con la API. Verifique la conexión."
-            ], color="danger", dismissable=True, className="fade-in"), "", None
+                "Por favor complete todos los campos requeridos antes de calcular la predicción."
+            ], color="warning", dismissable=True, className="fade-in",
+            style={'borderRadius': '12px', 'fontSize': '14px'}), "", None
         
-        # Extraer predicción
-        prediccion = result.get('prediccion', 0)
-        nivel, color = get_risk_level(prediccion)
-        
-        # Crear gráfico gauge
-        gauge = create_gauge_chart(prediccion, "Tasa Proyectada por 100,000 hab.")
-        
-        # Construir resultado completo con toda la información
-        results = html.Div([
-            dbc.Card([
-                dbc.CardBody([
-                    # Título
-                    html.H5([
-                        html.I(className="bi bi-check-circle-fill me-2", 
-                              style={'color': COLORS['secondary']}),
-                        "Resultados de la Predicción"
-                    ], style={'color': COLORS['text'], 'fontWeight': '600', 
-                             'marginBottom': '24px'}),
-                    
-                    # Sección principal: Gauge + Badge
-                    dbc.Row([
-                        dbc.Col([
-                            dcc.Graph(figure=gauge, config={'displayModeBar': False})
-                        ], md=6),
-                        dbc.Col([
-                            html.Div([
-                                html.H6("Nivel de Riesgo Estimado", 
-                                       style={'color': COLORS['text_muted'], 
-                                             'fontSize': '14px', 'marginBottom': '12px'}),
-                                dbc.Badge(
-                                    [html.I(className="bi bi-shield-fill me-2"), nivel],
-                                    color=color.replace('#', ''),
-                                    style={'fontSize': '20px', 'padding': '12px 24px', 
-                                          'fontWeight': '600'}
-                                ),
-                                
-                                html.Hr(style={'margin': '24px 0'}),
-                                
-                                # Interpretación
+        # Preparar datos para la API       # Preparar datos para la API
+            data = {
+                "poblacion_menores": float(pob), 
+                "porc_poblacion_urbana": float(urb), 
+                "porc_poblacion_rural": float(rur), 
+                "ipm": float(ipm), 
+                "cobertura_acueducto": float(acue), 
+                "cobertura_alcantarillado": float(alc), 
+                "cobertura_energia": float(ener), 
+                "pib_per_capita": float(pib), 
+                "tasa_homicidio": float(hom), 
+                "sexo_victima": sexo, 
+                "grupo_edad_victima": edad, 
+                "ciclo_vital": ciclo, 
+                "escolaridad": escol, 
+                "depto_hecho_dane": depto
+            }
+            
+            # Llamar a la API
+            result = predict_catboost(data)
+            
+            if result is None: 
+                return dbc.Alert([
+                    html.I(className="bi bi-exclamation-triangle-fill me-2"),
+                    "Error al conectar con la API. Verifique la conexión."
+                ], color="danger", dismissable=True, className="fade-in"), "", None
+            
+            # Extraer predicción
+            prediccion = result.get('prediccion', 0)
+            nivel, color = get_risk_level(prediccion)
+            
+            # Crear gráfico gauge
+            gauge = create_gauge_chart(prediccion, "Tasa Proyectada por 100,000 hab.")
+            
+            # Construir resultado completo con toda la información
+            results = html.Div([
+                dbc.Card([
+                    dbc.CardBody([
+                        # Título
+                        html.H5([
+                            html.I(className="bi bi-check-circle-fill me-2", 
+                                style={'color': COLORS['secondary']}),
+                            "Resultados de la Predicción"
+                        ], style={'color': COLORS['text'], 'fontWeight': '600', 
+                                'marginBottom': '24px'}),
+                        
+                        # Sección principal: Gauge + Badge
+                        dbc.Row([
+                            dbc.Col([
+                                dcc.Graph(figure=gauge, config={'displayModeBar': False})
+                            ], md=6),
+                            dbc.Col([
                                 html.Div([
-                                    html.H6("Interpretación", 
-                                           style={'color': COLORS['text'], 
-                                                 'fontWeight': '600', 'marginBottom': '12px'}),
-                                    html.P(
-                                        f"La tasa proyectada es de {prediccion:.2f} casos por cada 100,000 habitantes menores de edad.",
-                                        style={'fontSize': '14px', 'color': COLORS['neutral'], 
-                                              'lineHeight': '1.6'}
+                                    html.H6("Nivel de Riesgo Estimado", 
+                                        style={'color': COLORS['text_muted'], 
+                                                'fontSize': '14px', 'marginBottom': '12px'}),
+                                    dbc.Badge(
+                                        [html.I(className="bi bi-shield-fill me-2"), nivel],
+                                        color=color.replace('#', ''),
+                                        style={'fontSize': '20px', 'padding': '12px 24px', 
+                                            'fontWeight': '600'}
                                     ),
-                                    html.P(
-                                        f"Este municipio se clasifica en nivel de riesgo {nivel.lower()}.",
-                                        style={'fontSize': '14px', 'color': COLORS['neutral'], 
-                                              'lineHeight': '1.6', 'marginBottom': '0'}
-                                    )
-                                ])
-                            ], style={'marginTop': '16px'})
-                        ], md=6)
-                    ]),
-                    
-                    html.Hr(style={'margin': '32px 0', 'borderColor': COLORS['border']}),
-                    
-                    # Variables de Mayor Impacto
-                    html.Div([
-                        html.H6([
-                            html.I(className="bi bi-bar-chart-fill me-2"),
-                            "Variables de Mayor Impacto"
-                        ], style={'color': COLORS['text'], 'fontWeight': '600', 
-                                 'marginBottom': '16px'}),
+                                    
+                                    html.Hr(style={'margin': '24px 0'}),
+                                    
+                                    # Interpretación
+                                    html.Div([
+                                        html.H6("Interpretación", 
+                                            style={'color': COLORS['text'], 
+                                                    'fontWeight': '600', 'marginBottom': '12px'}),
+                                        html.P(
+                                            f"La tasa proyectada es de {prediccion:.2f} casos por cada 100,000 habitantes menores de edad.",
+                                            style={'fontSize': '14px', 'color': COLORS['neutral'], 
+                                                'lineHeight': '1.6'}
+                                        ),
+                                        html.P(
+                                            f"Este municipio se clasifica en nivel de riesgo {nivel.lower()}.",
+                                            style={'fontSize': '14px', 'color': COLORS['neutral'], 
+                                                'lineHeight': '1.6', 'marginBottom': '0'}
+                                        )
+                                    ])
+                                ], style={'marginTop': '16px'})
+                            ], md=6)
+                        ]),
                         
-                        dbc.Row([
-                            dbc.Col([
-                                dbc.Card([
-                                    dbc.CardBody([
-                                        html.I(className="bi bi-exclamation-octagon-fill", 
-                                              style={'fontSize': '24px', 'color': COLORS['danger']}),
-                                        html.H6("Tasa de Homicidio", className="mt-2 mb-1",
-                                               style={'fontSize': '14px', 'fontWeight': '600'}),
-                                        dbc.Badge("Impacto Alto", color="danger", 
-                                                 style={'fontSize': '11px'})
-                                    ], className="text-center py-3")
-                                ], className="stat-card", 
-                                   style={'borderLeftColor': COLORS['danger'], 
-                                         'borderLeftWidth': '4px'})
-                            ], md=3, className="mb-3"),
-                            
-                            dbc.Col([
-                                dbc.Card([
-                                    dbc.CardBody([
-                                        html.I(className="bi bi-graph-down", 
-                                              style={'fontSize': '24px', 'color': COLORS['warning']}),
-                                        html.H6("IPM", className="mt-2 mb-1",
-                                               style={'fontSize': '14px', 'fontWeight': '600'}),
-                                        dbc.Badge("Impacto Alto", color="warning", 
-                                                 style={'fontSize': '11px'})
-                                    ], className="text-center py-3")
-                                ], className="stat-card", 
-                                   style={'borderLeftColor': COLORS['warning'], 
-                                         'borderLeftWidth': '4px'})
-                            ], md=3, className="mb-3"),
-                            
-                            dbc.Col([
-                                dbc.Card([
-                                    dbc.CardBody([
-                                        html.I(className="bi bi-cash-stack", 
-                                              style={'fontSize': '24px', 'color': COLORS['info']}),
-                                        html.H6("PIB per cápita", className="mt-2 mb-1",
-                                               style={'fontSize': '14px', 'fontWeight': '600'}),
-                                        dbc.Badge("Impacto Medio", color="info", 
-                                                 style={'fontSize': '11px'})
-                                    ], className="text-center py-3")
-                                ], className="stat-card", 
-                                   style={'borderLeftColor': COLORS['info'], 
-                                         'borderLeftWidth': '4px'})
-                            ], md=3, className="mb-3"),
-                            
-                            dbc.Col([
-                                dbc.Card([
-                                    dbc.CardBody([
-                                        html.I(className="bi bi-building", 
-                                              style={'fontSize': '24px', 'color': COLORS['secondary']}),
-                                        html.H6("Cobertura Servicios", className="mt-2 mb-1",
-                                               style={'fontSize': '14px', 'fontWeight': '600'}),
-                                        dbc.Badge("Impacto Medio", color="success", 
-                                                 style={'fontSize': '11px'})
-                                    ], className="text-center py-3")
-                                ], className="stat-card", 
-                                   style={'borderLeftColor': COLORS['secondary'], 
-                                         'borderLeftWidth': '4px'})
-                            ], md=3, className="mb-3")
-                        ])
-                    ]),
-                    
-                    html.Hr(style={'margin': '32px 0', 'borderColor': COLORS['border']}),
-                    
-                    # Información adicional
-                    html.Div([
-                        html.H6([
-                            html.I(className="bi bi-info-circle-fill me-2"),
-                            "Información del Análisis"
-                        ], style={'color': COLORS['text'], 'fontWeight': '600', 
-                                 'marginBottom': '16px'}),
+                        html.Hr(style={'margin': '32px 0', 'borderColor': COLORS['border']}),
                         
-                        dbc.Row([
-                            dbc.Col([
-                                html.Div([
-                                    html.Small("Departamento:", 
-                                              style={'color': COLORS['text_muted'], 
-                                                    'fontSize': '12px', 'display': 'block'}),
-                                    html.P(depto, 
-                                          style={'fontSize': '14px', 'fontWeight': '600', 
-                                                'color': COLORS['text'], 'marginBottom': '0'})
-                                ])
-                            ], md=3),
+                        # Variables de Mayor Impacto
+                        html.Div([
+                            html.H6([
+                                html.I(className="bi bi-bar-chart-fill me-2"),
+                                "Variables de Mayor Impacto"
+                            ], style={'color': COLORS['text'], 'fontWeight': '600', 
+                                    'marginBottom': '16px'}),
                             
-                            dbc.Col([
-                                html.Div([
-                                    html.Small("Perfil de Víctima:", 
-                                              style={'color': COLORS['text_muted'], 
-                                                    'fontSize': '12px', 'display': 'block'}),
-                                    html.P(f"{sexo} - {edad}", 
-                                          style={'fontSize': '14px', 'fontWeight': '600', 
-                                                'color': COLORS['text'], 'marginBottom': '0'})
-                                ])
-                            ], md=3),
+                            dbc.Row([
+                                dbc.Col([
+                                    dbc.Card([
+                                        dbc.CardBody([
+                                            html.I(className="bi bi-exclamation-octagon-fill", 
+                                                style={'fontSize': '24px', 'color': COLORS['danger']}),
+                                            html.H6("Tasa de Homicidio", className="mt-2 mb-1",
+                                                style={'fontSize': '14px', 'fontWeight': '600'}),
+                                            dbc.Badge("Impacto Alto", color="danger", 
+                                                    style={'fontSize': '11px'})
+                                        ], className="text-center py-3")
+                                    ], className="stat-card", 
+                                    style={'borderLeftColor': COLORS['danger'], 
+                                            'borderLeftWidth': '4px'})
+                                ], md=3, className="mb-3"),
+                                
+                                dbc.Col([
+                                    dbc.Card([
+                                        dbc.CardBody([
+                                            html.I(className="bi bi-graph-down", 
+                                                style={'fontSize': '24px', 'color': COLORS['warning']}),
+                                            html.H6("IPM", className="mt-2 mb-1",
+                                                style={'fontSize': '14px', 'fontWeight': '600'}),
+                                            dbc.Badge("Impacto Alto", color="warning", 
+                                                    style={'fontSize': '11px'})
+                                        ], className="text-center py-3")
+                                    ], className="stat-card", 
+                                    style={'borderLeftColor': COLORS['warning'], 
+                                            'borderLeftWidth': '4px'})
+                                ], md=3, className="mb-3"),
+                                
+                                dbc.Col([
+                                    dbc.Card([
+                                        dbc.CardBody([
+                                            html.I(className="bi bi-cash-stack", 
+                                                style={'fontSize': '24px', 'color': COLORS['info']}),
+                                            html.H6("PIB per cápita", className="mt-2 mb-1",
+                                                style={'fontSize': '14px', 'fontWeight': '600'}),
+                                            dbc.Badge("Impacto Medio", color="info", 
+                                                    style={'fontSize': '11px'})
+                                        ], className="text-center py-3")
+                                    ], className="stat-card", 
+                                    style={'borderLeftColor': COLORS['info'], 
+                                            'borderLeftWidth': '4px'})
+                                ], md=3, className="mb-3"),
+                                
+                                dbc.Col([
+                                    dbc.Card([
+                                        dbc.CardBody([
+                                            html.I(className="bi bi-building", 
+                                                style={'fontSize': '24px', 'color': COLORS['secondary']}),
+                                            html.H6("Cobertura Servicios", className="mt-2 mb-1",
+                                                style={'fontSize': '14px', 'fontWeight': '600'}),
+                                            dbc.Badge("Impacto Medio", color="success", 
+                                                    style={'fontSize': '11px'})
+                                        ], className="text-center py-3")
+                                    ], className="stat-card", 
+                                    style={'borderLeftColor': COLORS['secondary'], 
+                                            'borderLeftWidth': '4px'})
+                                ], md=3, className="mb-3")
+                            ])
+                        ]),
+                        
+                        html.Hr(style={'margin': '32px 0', 'borderColor': COLORS['border']}),
+                        
+                        # Información adicional
+                        html.Div([
+                            html.H6([
+                                html.I(className="bi bi-info-circle-fill me-2"),
+                                "Información del Análisis"
+                            ], style={'color': COLORS['text'], 'fontWeight': '600', 
+                                    'marginBottom': '16px'}),
                             
-                            dbc.Col([
-                                html.Div([
-                                    html.Small("Población Menores:", 
-                                              style={'color': COLORS['text_muted'], 
-                                                    'fontSize': '12px', 'display': 'block'}),
-                                    html.P(f"{int(pob):,}", 
-                                          style={'fontSize': '14px', 'fontWeight': '600', 
-                                                'color': COLORS['text'], 'marginBottom': '0'})
-                                ])
-                            ], md=3),
-                            
-                            dbc.Col([
-                                html.Div([
-                                    html.Small("Nivel de Riesgo:", 
-                                              style={'color': COLORS['text_muted'], 
-                                                    'fontSize': '12px', 'display': 'block'}),
-                                    html.P(nivel, 
-                                          style={'fontSize': '14px', 'fontWeight': '600', 
-                                                'color': color, 'marginBottom': '0'})
-                                ])
-                            ], md=3)
+                            dbc.Row([
+                                dbc.Col([
+                                    html.Div([
+                                        html.Small("Departamento:", 
+                                                style={'color': COLORS['text_muted'], 
+                                                        'fontSize': '12px', 'display': 'block'}),
+                                        html.P(depto, 
+                                            style={'fontSize': '14px', 'fontWeight': '600', 
+                                                    'color': COLORS['text'], 'marginBottom': '0'})
+                                    ])
+                                ], md=3),
+                                
+                                dbc.Col([
+                                    html.Div([
+                                        html.Small("Perfil de Víctima:", 
+                                                style={'color': COLORS['text_muted'], 
+                                                        'fontSize': '12px', 'display': 'block'}),
+                                        html.P(f"{sexo} - {edad}", 
+                                            style={'fontSize': '14px', 'fontWeight': '600', 
+                                                    'color': COLORS['text'], 'marginBottom': '0'})
+                                    ])
+                                ], md=3),
+                                
+                                dbc.Col([
+                                    html.Div([
+                                        html.Small("Población Menores:", 
+                                                style={'color': COLORS['text_muted'], 
+                                                        'fontSize': '12px', 'display': 'block'}),
+                                        html.P(f"{int(pob):,}", 
+                                            style={'fontSize': '14px', 'fontWeight': '600', 
+                                                    'color': COLORS['text'], 'marginBottom': '0'})
+                                    ])
+                                ], md=3),
+                                
+                                dbc.Col([
+                                    html.Div([
+                                        html.Small("Nivel de Riesgo:", 
+                                                style={'color': COLORS['text_muted'], 
+                                                        'fontSize': '12px', 'display': 'block'}),
+                                        html.P(nivel, 
+                                            style={'fontSize': '14px', 'fontWeight': '600', 
+                                                    'color': color, 'marginBottom': '0'})
+                                    ])
+                                ], md=3)
+                            ])
                         ])
-                    ])
-                    
-                ], style={'padding': '32px'})
-            ], className="shadow-sm fade-in", style={'borderRadius': '16px'})
-        ])
-        
-        return results, "", result
+                        
+                    ], style={'padding': '32px'})
+                ], className="shadow-sm fade-in", style={'borderRadius': '16px'})
+            ])
+            
+            return results, "", result
 
     # ========================================================================
     # CLUSTERS - KMEANS
